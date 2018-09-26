@@ -59,21 +59,21 @@ class RocketChatBotAdapter extends Adapter {
     driver.connect()
       .catch((err) => {
         this.robot.logger.error(`Unable to connect: ${JSON.stringify(err)}`)
-        throw err
+        this.emit('error', err);
       })
       .then(() => {
         return driver.login()
       })
       .catch((err) => {
         this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`)
-        throw err
+        this.emit('error', err);
       })
       .then(() => {
         return driver.subscribeToMessages()
       })
       .catch((err) => {
         this.robot.logger.error(`Unable to subscribe ${JSON.stringify(err)}`)
-        throw err
+        this.emit('error', err);
       })
       .then(() => {
         driver.respondToMessages(this.process.bind(this)) // reactive callback
