@@ -58,14 +58,14 @@ class RocketChatBotAdapter extends Adapter {
     driver.useLog(this.robot.logger)
     driver.connect()
       .catch((err) => {
-        this.robot.logger.error(this.robot.logger.error(`Unable to connect: ${JSON.stringify(err)}`))
+        this.robot.logger.error(`Unable to connect: ${JSON.stringify(err)}`)
         throw err
       })
       .then(() => {
         return driver.login()
       })
       .catch((err) => {
-        this.robot.logger.error(this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`))
+        this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`)
         throw err
       })
       .then(() => {
