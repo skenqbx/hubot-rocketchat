@@ -56,29 +56,27 @@ class RocketChatBotAdapter extends Adapter {
     // Joins single or array of rooms by name from room setting (comma separated)
     // Reactive message subscription uses callback to process every stream update
     driver.useLog(this.robot.logger)
-    driver.connect()
-      .catch((err) => {
+
+    driver.connect().then(() => {
+        driver.login().then(() => {
+          driver.subscribeToMessages().then(() => {
+            driver.respondToMessages(this.process.bind(this)).then(() => {
+              this.emit('connected')
+            }, (err) => {
+              this.emit('error', err)
+            })
+          }, (err) => {
+            this.robot.logger.error(`Unable to subscribe ${JSON.stringify(err)}`)
+            this.emit('error', err)
+          })
+        }, (err) => {
+          this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`)
+          this.emit('error', err)
+        })
+      }, (err) => {
         this.robot.logger.error(`Unable to connect: ${JSON.stringify(err)}`)
-        this.emit('error', err);
-      })
-      .then(() => {
-        return driver.login()
-      })
-      .catch((err) => {
-        this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`)
-        this.emit('error', err);
-      })
-      .then(() => {
-        return driver.subscribeToMessages()
-      })
-      .catch((err) => {
-        this.robot.logger.error(`Unable to subscribe ${JSON.stringify(err)}`)
-        this.emit('error', err);
-      })
-      .then(() => {
-        driver.respondToMessages(this.process.bind(this)) // reactive callback
-        this.emit('connected') // tells hubot to load scripts
-      })
+        this.emit('error', err)
+      });
   }
 
   /** Process every incoming message in subscription */
